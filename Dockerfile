@@ -16,7 +16,7 @@ RUN apk -U --no-cache add \
     python3.6 setup.py install && \
     cd / && \
     rm -rf /opt/snare && \
-    clone --target http://example.com && \
+    clone --target 192.168.1.5 && \
 
 # Clean up
     apk del --purge \
@@ -28,4 +28,4 @@ RUN apk -U --no-cache add \
     rm -rf /var/cache/apk/*
 
 # Start snare
-CMD snare --no-dorks true --auto-update false --host-ip 0.0.0.0 --port 8080 --page-dir example.com
+CMD snare --no-dorks true --auto-update false --tanner --host-ip 0.0.0.0 --port 80 --page-dir
