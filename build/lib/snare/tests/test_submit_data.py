@@ -6,7 +6,6 @@ import os
 import json
 import yarl
 import aiohttp
-from json import JSONDecodeError
 from snare.utils.asyncmock import AsyncMock
 from snare.tanner_handler import TannerHandler
 from snare.utils.page_path_generator import generate_unique_path
@@ -39,7 +38,7 @@ class TestSubmitData(unittest.TestCase):
                 timer=None, request_info=None, traces=None, loop=self.loop,
                 session=None
             )
-        )
+                                              )
         uuid = "test_uuid"
         args.tanner = "tanner.mushmush.org"
         args.no_dorks = True
@@ -51,7 +50,6 @@ class TestSubmitData(unittest.TestCase):
 
         async def test():
             self.result = await self.handler.submit_data(self.data)
-
         self.loop.run_until_complete(test())
         aiohttp.ClientSession.post.assert_called_with(
             'http://tanner.mushmush.org:8090/event', data=json.dumps(self.data), timeout=10.0
@@ -62,26 +60,14 @@ class TestSubmitData(unittest.TestCase):
 
         async def test():
             self.result = await self.handler.submit_data(self.data)
-
         self.loop.run_until_complete(test())
-        self.assertEqual(self.result, dict(detection={'type': 1}, sess_uuid="test_uuid"))
-
-    def test_submit_data_error(self):
-        aiohttp.ClientResponse.json = AsyncMock(side_effect=JSONDecodeError('ERROR', '', 0))
-
-        async def test():
-            self.result = await self.handler.submit_data(self.data)
-
-        with self.assertLogs(level='ERROR') as log:
-            self.loop.run_until_complete(test())
-            self.assertIn('Error submitting data: ERROR: line 1 column 1 (char 0) {}'.format(self.data), log.output[0])
+        self.assertEquals(self.result, dict(detection={'type': 1}, sess_uuid="test_uuid"))
 
     def test_event_result_exception(self):
         aiohttp.ClientResponse.json = AsyncMock(side_effect=Exception())
 
         async def test():
             self.result = await self.handler.submit_data(self.data)
-
         with self.assertRaises(Exception):
             self.loop.run_until_complete(test())
 

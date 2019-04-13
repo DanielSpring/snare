@@ -36,22 +36,20 @@ class TestHandleHtmlContent(unittest.TestCase):
 
         async def test():
             self.return_content = await self.handler.handle_content(self.content)
-
         self.loop.run_until_complete(test())
         soup = BeautifulSoup(self.return_content, "html.parser")
         return_content = soup.decode("utf-8")
-        self.assertEqual(return_content, self.expected_content)
+        self.assertEquals(return_content, self.expected_content)
 
     def test_handle_content_no_dorks(self):
         self.handler.no_dorks = True
 
         async def test():
             self.return_content = await self.handler.handle_content(self.content)
-
         self.loop.run_until_complete(test())
         soup = BeautifulSoup(self.return_content, "html.parser")
         self.return_content = soup.decode("utf-8")
-        self.assertEqual(self.return_content, self.no_dorks_content)
+        self.assertEquals(self.return_content, self.no_dorks_content)
 
     def test_handle_content_exception(self):
         self.handler.no_dorks = False
@@ -59,7 +57,6 @@ class TestHandleHtmlContent(unittest.TestCase):
 
         async def test():
             self.return_content = await self.handler.handle_content(self.content)
-
         with self.assertRaises(IndexError):
             self.loop.run_until_complete(test())
 
